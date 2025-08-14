@@ -1,0 +1,1419 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "2.0.0",
+    "title": "Forest API",
+    "description": "\n\n\n\n\n\n#  **Introduction**\n\nThe document describes Forest API endpoints related to working with a Customer\n"
+  },
+  "servers": [
+    {
+      "url": "https://apiexpert.crystalblockchain.com"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Customer"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/monitor/one": {
+      "post": {
+        "tags": [
+          "Customer"
+        ],
+        "summary": "Creating the customer",
+        "description": "Endpoint for creating a new customer. In the response, you will receive a unique token corresponding to the customer. It will be used as a parameter in further requests dealing with the customer.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Customer identifier. Please do not use sensitive data.",
+                    "example": "C#11224"
+                  },
+                  "note": {
+                    "type": "string",
+                    "description": "Comments for the customer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "description": "Token corresponding to the customer",
+                          "example": "jVWhkQ3JxMQABnxp"
+                        }
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/monitor/one/{token}": {
+      "get": {
+        "tags": [
+          "Customer"
+        ],
+        "summary": "Viewing customer details",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "Token corresponding to the customer",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Customer"
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Customer"
+        ],
+        "summary": "Edit customer name or notes",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "Token corresponding to the customer",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "archived": {
+                    "type": "boolean",
+                    "example": true,
+                    "description": "Archive or unarchive transfer"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Customer identifier. Please do not use sensitive data.",
+                    "example": "C#11224"
+                  },
+                  "note": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/monitor/list": {
+      "post": {
+        "tags": [
+          "Customer"
+        ],
+        "summary": "Viewing customer details for all customers matching the specified parameters",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "with_total": {
+                    "type": "number",
+                    "enum": [
+                      1,
+                      0
+                    ],
+                    "default": 0
+                  },
+                  "offset": {
+                    "type": "number",
+                    "default": 0
+                  },
+                  "limit": {
+                    "type": "number",
+                    "description": "The value ranges between 1 and 20000",
+                    "example": 10
+                  },
+                  "order": {
+                    "type": "string",
+                    "enum": [
+                      "last_added",
+                      "n_txs",
+                      "amount",
+                      "fiat",
+                      "risky_volume",
+                      "risky_volume_fiat"
+                    ],
+                    "default": "last_added"
+                  },
+                  "direction": {
+                    "type": "string",
+                    "enum": [
+                      "asc",
+                      "desc"
+                    ]
+                  },
+                  "filter": {
+                    "$ref": "#/components/schemas/filter_customer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Customer"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/Meta"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Auth-Apikey"
+      }
+    },
+    "schemas": {
+      "Currency": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "The currency name",
+            "example": "btc"
+          },
+          "issuer": {
+            "type": "string",
+            "example": "32TLn1WLcu8LtfvweLzYUYU6ubc2YV9eZs",
+            "description": "The token issuer (available only for tokens, otherwise it will be null)"
+          },
+          "name": {
+            "type": "string",
+            "example": "TetherUS",
+            "description": "The token name (available only for tokens, otherwise it will be null)"
+          },
+          "symbol": {
+            "type": "string",
+            "example": "USDT",
+            "description": "The symbol corresponding to the token or transfer"
+          },
+          "token_id": {
+            "type": "integer",
+            "example": 1,
+            "description": "The identifier corresponding to the token. Please use it while adding the token transfer."
+          },
+          "unit": {
+            "type": "integer",
+            "example": 8
+          }
+        }
+      },
+      "Customer": {
+        "type": "object",
+        "properties": {
+          "amount_deposit": {
+            "type": "object",
+            "properties": {
+              "btc": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855,
+                  "1": 212000000000
+                },
+                "description": "The token code - amount pairs of customer deposits. \"0\" corresponds to the base currency. You can view available tokens using the endpoint /explorer/token/list described above."
+              },
+              "eth": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855
+                },
+                "description": "The token code - amount pairs of customer deposits. \"0\" corresponds to the base currency. You can view available tokens using the endpoint /explorer/token/list described above."
+              },
+              "bch": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855,
+                  "1": 212000000000
+                },
+                "description": "The token code - amount pairs of customer deposits. \"0\" corresponds to the base currency."
+              },
+              "xrp": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855,
+                  "1": 212000000000
+                },
+                "description": "The token code - amount pairs of customer deposits. \"0\" corresponds to the base currency. You can view available tokens using the endpoint /explorer/token/list described above."
+              },
+              "ltc": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855,
+                  "1": 212000000000
+                },
+                "description": "The token code - amount pairs of customer deposits. \"0\" corresponds to the base currency."
+              }
+            }
+          },
+          "amount_withdrawal": {
+            "type": "object",
+            "properties": {
+              "btc": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855,
+                  "1": 212000000000
+                },
+                "description": "The token code - amount pairs of customer withdrawals. \"0\" corresponds to the base currency. You can view available tokens using the endpoint /explorer/token/list described above."
+              },
+              "eth": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855
+                },
+                "description": "The token code - amount pairs of customer deposits. \"0\" corresponds to the base currency. You can view available tokens using the endpoint /explorer/token/list described above."
+              },
+              "bch": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855,
+                  "1": 212000000000
+                },
+                "description": "The token code - amount pairs of customer withdrawals. \"0\" corresponds to the base currency."
+              },
+              "xrp": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855,
+                  "1": 212000000000
+                },
+                "description": "The token code - amount pairs of customer deposits. \"0\" corresponds to the base currency. You can view available tokens using the endpoint /explorer/token/list described above."
+              },
+              "ltc": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855,
+                  "1": 212000000000
+                },
+                "description": "The token code - amount pairs of customer withdrawals. \"0\" corresponds to the base currency."
+              }
+            }
+          },
+          "archived": {
+            "type": "boolean",
+            "example": false
+          },
+          "created_at": {
+            "type": "integer",
+            "example": 1571653722
+          },
+          "last_added": {
+            "type": "integer",
+            "example": 1571653914
+          },
+          "n_addresses": {
+            "type": "integer",
+            "example": 2,
+            "description": "Number of unarchived addresses"
+          },
+          "n_archived": {
+            "type": "integer",
+            "example": 2,
+            "description": "Number of archived transfers"
+          },
+          "n_flagged": {
+            "type": "integer",
+            "example": 2,
+            "description": "Number of flagged transfers"
+          },
+          "n_monitored_addresses": {
+            "type": "integer",
+            "example": 2,
+            "description": "Number of monitored addresses"
+          },
+          "n_txs": {
+            "type": "integer",
+            "example": 2,
+            "description": "Number of transfers"
+          },
+          "name": {
+            "type": "string",
+            "example": "Test customer",
+            "description": "Customer's name (please use identifiers without disclosing sensitive data)"
+          },
+          "note": {
+            "type": "string",
+            "example": "Test note",
+            "description": "The note left on the customer"
+          },
+          "risky_volume": {
+            "type": "object",
+            "properties": {
+              "btc": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855,
+                  "1": 212000000000
+                },
+                "description": "The total amounts received from the addresses with the Risk Score greater than 74%, including indirect interactions (in satoshis ) in base currency and tokens. The response is in the form of token code - amount pairs. \"0\" corresponds to the base currency.         You can view available tokens using the endpoint /monitor/currency/list described above."
+              },
+              "eth": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855
+                },
+                "description": "The total amounts received from the addresses with the Risk Score greater than 74%, including indirect interactions (in satoshis ) in base currency and tokens. The response is in the form of token code - amount pairs. \"0\" corresponds to the base currency. You can view available tokens using the endpoint /monitor/currency/list described above."
+              },
+              "bch": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855,
+                  "1": 212000000000
+                },
+                "description": "The total amounts received from the addresses with the Risk Score greater than 74%, including indirect interactions (in satoshis ) in base currency and tokens. The esponse is in the form of token code - amount pairs. \"0\" corresponds to the base currency. "
+              },
+              "xrp": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855,
+                  "1": 212000000000
+                },
+                "description": "The total amounts received from the addresses with the Risk Score greater than 74%, including indirect interactions (in satoshis ) in base currency and tokens. The response is in the form of token code - amount pairs. \"0\" corresponds to the base currency. You can view available tokens using the endpoint /monitor/currency/list described above."
+              },
+              "ltc": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "example": {
+                  "0": 6155792855,
+                  "1": 212000000000
+                },
+                "description": "The total amounts received from the addresses with the Risk Score greater than 74%, including indirect interactions (in satoshis ) in base currency and tokens. The response is in the form of token code - amount pairs. \"0\" corresponds to the base currency. "
+              }
+            }
+          },
+          "risky_volume_fiat": {
+            "type": "integer",
+            "example": 28173,
+            "description": "Risky volume in fiat currency."
+          },
+          "token": {
+            "type": "string",
+            "example": "YmXMfc4kjUyCEzK5",
+            "description": "Token corresponding to the customer"
+          },
+          "updated_at": {
+            "type": "integer",
+            "example": 1570387957
+          },
+          "updating": {
+            "type": "boolean",
+            "example": false
+          },
+          "fiat_deposit": {
+            "type": "number",
+            "example": 4314600,
+            "description": "Total amount deposited by customer, in selected fiat"
+          },
+          "fiat_withdrawal": {
+            "type": "number",
+            "example": 4314600,
+            "description": "Total amount withdrawn by customer, in selected fiat"
+          }
+        }
+      },
+      "Transfer_Payload_Batch": {
+        "type": "object",
+        "required": [
+          "address",
+          "currency",
+          "name",
+          "direction"
+        ],
+        "properties": {
+          "token_id": {
+            "type": "integer",
+            "example": 9,
+            "description": "Token identifier. You can view available tokens using the endpoint /monitor/currency/list described above. "
+          },
+          "tx": {
+            "type": "string",
+            "description": "Transaction hash",
+            "example": "8567543fe47644264e40c605720780ee38bca25377f58fef055343941b50a28c"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "deposit",
+              "withdrawal"
+            ],
+            "example": "deposit",
+            "description": "Transaction type"
+          },
+          "address": {
+            "type": "string",
+            "description": "The received of the transfer (the address must be in the transaction outputs)",
+            "example": "TV6MuMXfmLbBqPZvBHdwFsDnQeVfnmiuSi"
+          },
+          "customer": {
+            "type": "string",
+            "example": "Test customer",
+            "description": "Customer name "
+          },
+          "currency": {
+            "type": "string",
+            "description": "Transfer currency",
+            "example": "trx"
+          }
+        }
+      },
+      "Transfer_Payload_Single": {
+        "type": "object",
+        "required": [
+          "address",
+          "currency",
+          "name",
+          "direction"
+        ],
+        "properties": {
+          "token_id": {
+            "type": "integer",
+            "example": 9,
+            "description": "Token identifier. You can view available tokens using the endpoint /monitor/currency/list described above. "
+          },
+          "tx": {
+            "type": "string",
+            "description": "Transaction hash",
+            "example": "8567543fe47644264e40c605720780ee38bca25377f58fef055343941b50a28c"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "deposit",
+              "withdrawal"
+            ],
+            "example": "deposit",
+            "description": "Transaction type"
+          },
+          "address": {
+            "type": "string",
+            "description": "The received of the transfer (the address must be in the transaction outputs)",
+            "example": "TV6MuMXfmLbBqPZvBHdwFsDnQeVfnmiuSi"
+          },
+          "name": {
+            "type": "string",
+            "example": "Test customer",
+            "description": "Customer name "
+          },
+          "currency": {
+            "type": "string",
+            "description": "Transfer currency",
+            "example": "trx"
+          }
+        }
+      },
+      "Transfer": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "example": "1AxCHtZA1mxNLg2o6KPRCyDRueifLPXED",
+            "description": "Deposit/withdrawal address"
+          },
+          "alert_grade": {
+            "type": "string",
+            "enum": [
+              "medium",
+              "high"
+            ]
+          },
+          "alert_type": {
+            "type": "array",
+            "description": "The list of alert types of the transfer. Possible options are:\n* counterparty - the alerts based on blocklist and the risk score\n* pattern  - the alerts generated by transactional patterns\n* amount - the rest of alerts (including amount-based alerts)\n\nNew types may be added in further releases if new alerts are added. \n",
+            "items": {
+              "type": "string",
+              "enum": [
+                "counterparty",
+                "pattern",
+                "amount"
+              ]
+            }
+          },
+          "alert_list": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "example": [
+                [
+                  ">=",
+                  "#rscore",
+                  0.2
+                ],
+                "#flag-medium"
+              ],
+              "description": "The list of alerts triggered. The form of alert depends on the alert type:\n  * pattern - the alerts based on patterns. The alert will look like [\"GET\", \"pattern-sequence\", \"lkajsklmmzzxc\"], \"#flag-high\"], where \"lkajsklmmzzxc\" is the token corresponding to the pattern and \"#flag-high\" is the alert grade\n  * counterparty - for blocklist interaction alert will be [\"#blist_in\", true] (it will be updated in further releases). For risk score based alerts it will be in the form [[\">=\", \"#rscore\", 0.2], \"#flag-medium\"] (particular alert is generated in cases when counterparty risk score is >= 20%)\n  * amount - the alert for amount-based flag will look like [[\">\", \"#amount-payment\", 0], \"#flag-high\"] (for amounts received from specific entity type) or [[\">\", \"#risky-amount-indirect\", 0], \"#flag-medium\"] (for risky amount)",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "amount": {
+            "type": "integer",
+            "example": 420060000,
+            "description": "Amount received by the address"
+          },
+          "archived": {
+            "type": "boolean",
+            "example": true
+          },
+          "changed_at": {
+            "type": "integer",
+            "example": 1571653914
+          },
+          "counterparty": {
+            "type": "object",
+            "properties": {
+              "address": {
+                "type": "string",
+                "example": "3GPyH7WWAZtK8rWMb6jN2jEeonSQe4sCRg",
+                "description": "If an address does not belong to an entity, we display only the address hash in the counterparty"
+              },
+              "id": {
+                "type": "integer",
+                "example": 1194672,
+                "description": "Internal entity identifier"
+              },
+              "type": {
+                "type": "string",
+                "example": "exchange_mlrisk_high",
+                "description": "Entity type"
+              },
+              "name": {
+                "type": "string",
+                "example": "BtcTurk",
+                "description": "Entity name"
+              },
+              "slug": {
+                "type": "string",
+                "example": "BtcTurk"
+              },
+              "subtype": {
+                "type": "string",
+                "description": "Entity subtype (if available)"
+              }
+            }
+          },
+          "created_at": {
+            "type": "integer",
+            "example": 1571653914
+          },
+          "currency": {
+            "type": "string",
+            "example": "btc",
+            "description": "Transfer currency"
+          },
+          "customer": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "C#1456",
+                "description": "Customer name"
+              },
+              "token": {
+                "type": "string",
+                "example": "bn3KXb66HkncoJPv",
+                "description": "Token corresponding to the customer"
+              }
+            }
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "deposit",
+              "withdrawal"
+            ]
+          },
+          "fiat_code_effective": {
+            "type": "string",
+            "example": "eur",
+            "description": "The fiat currency selected in the profile while the transfer was calculcated."
+          },
+          "flagged": {
+            "type": "boolean",
+            "example": false
+          },
+          "flag_reason": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": "Boolean expression with flagging parameters. The field may be changed after each new release. We recommend using alert_type and alert_list properties. ",
+            "example": [
+              "AND",
+              [
+                ">",
+                "#amount",
+                1000
+              ],
+              [
+                "OR",
+                [
+                  ">",
+                  "#rinflow",
+                  0
+                ],
+                [
+                  ">",
+                  "#rscore",
+                  0.5
+                ]
+              ]
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "example": null,
+            "enum": [
+              "bad_output",
+              "pruned",
+              "not_found"
+            ],
+            "description": "(Available only for failed transfers) The reason why the transfer failed: <br>\n\n  * bad_output - the specified address is not in the  transaction outputs  <br>\n  * pruned - transaction was pruned <br>\n  * not_found - transaction has had a \"missed\" status for more than 24 hours "
+          },
+          "id": {
+            "type": "integer",
+            "example": 1010,
+            "description": "The transfer identifier"
+          },
+          "riskscore": {
+            "type": "number",
+            "example": 0,
+            "description": "The Risk Score of the transfer. For deposit transfers, it is the average Risk Score of the transaction inputs, for withdrawal addresses it is the Risk Score of the specified address."
+          },
+          "riskscore_profile": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "example": 10
+              },
+              "name": {
+                "type": "string",
+                "example": "KYC profile"
+              },
+              "history_id": {
+                "type": "integer",
+                "example": 322
+              },
+              "signals": {
+                "$ref": "#/components/schemas/signals"
+              }
+            }
+          },
+          "risky_volume": {
+            "type": "number",
+            "example": 12345.667,
+            "description": "The total amount received from the addresses with the Risk Score greater than 74%, including indirect interactions (in satoshis)"
+          },
+          "risky_volume_fiat": {
+            "type": "integer",
+            "example": 112,
+            "description": "The risky inflow in selected fiat."
+          },
+          "settings_id": {
+            "type": "integer",
+            "example": 1579,
+            "description": "Identifier of selected alert settings"
+          },
+          "signals": {
+            "$ref": "#/components/schemas/signals"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "updating",
+              "pending",
+              "missed",
+              "failed",
+              "new"
+            ],
+            "example": "ready",
+            "description": "Transfer status. It may be: <br>\n  * Ready - all values were calculated <br>\n  * Pending - the transaction is in the mempool <br>\n  * Updating - the values are being calculated <br> \n  * Missed - was not found in our databases <br>\n  * Failed - the transaction was failed. The reason is specified in the field \"reason\"\n  * New - the transfer has not been processed by our servers yet due to high workload. Such transfers will be processes soon.  "
+          },
+          "time": {
+            "type": "integer",
+            "example": 1571652931
+          },
+          "token_id": {
+            "type": "integer",
+            "description": "The code corresponding to the token. It is \"0\" for the base currency. You can view available tokens using the endpoint /explorer/token/list described above.",
+            "example": 0
+          },
+          "tx": {
+            "type": "string",
+            "example": "f00ddb52671bcdddfb1bb654c091320f624e443edba392ea27e178817048b776",
+            "description": "Transaction hash"
+          },
+          "updated_at": {
+            "type": "integer",
+            "example": 1571653914
+          },
+          "fiat": {
+            "type": "integer",
+            "example": 3449426,
+            "description": "The transfer amount in selected fiat"
+          }
+        }
+      },
+      "signals": {
+        "type": "object",
+        "description": "Connection with various entities",
+        "properties": {
+          "atm": {
+            "type": "number",
+            "example": 0
+          },
+          "child_exploitation": {
+            "type": "number",
+            "example": 0
+          },
+          "dark_market": {
+            "type": "number",
+            "example": 0
+          },
+          "dark_service": {
+            "type": "number",
+            "example": 0
+          },
+          "enforcement_action": {
+            "type": "number",
+            "example": 0
+          },
+          "exchange_fraudulent": {
+            "type": "number",
+            "example": 0
+          },
+          "exchange_licensed": {
+            "type": "number",
+            "example": 0.0030272452068617556
+          },
+          "exchange_unlicensed": {
+            "type": "number",
+            "example": 0.5025227043390514
+          },
+          "gambling": {
+            "type": "number",
+            "example": 0
+          },
+          "illegal_service": {
+            "type": "number",
+            "example": 0
+          },
+          "liquidity_pools": {
+            "type": "number",
+            "example": 0
+          },
+          "marketplace": {
+            "type": "number",
+            "example": 0
+          },
+          "miner": {
+            "type": "integer",
+            "example": 0
+          },
+          "mixer": {
+            "type": "number",
+            "example": 0
+          },
+          "p2p_exchange_licensed": {
+            "type": "number",
+            "example": 0
+          },
+          "p2p_exchange_unlicensed": {
+            "type": "number",
+            "example": 0
+          },
+          "payment": {
+            "type": "number",
+            "example": 0.4944500504540868
+          },
+          "ransom": {
+            "type": "number",
+            "example": 0
+          },
+          "sanctions": {
+            "type": "number",
+            "example": 0
+          },
+          "scam": {
+            "type": "number",
+            "example": 0
+          },
+          "seized_assets": {
+            "type": "number",
+            "example": 0
+          },
+          "stolen_coins": {
+            "type": "number",
+            "example": 0
+          },
+          "terrorism_financing": {
+            "type": "number",
+            "example": 0
+          },
+          "wallet": {
+            "type": "number",
+            "example": 0
+          }
+        }
+      },
+      "Meta": {
+        "description": "Service metadata",
+        "type": "object",
+        "required": [
+          "error_code",
+          "error_message",
+          "server_time",
+          "validation_errors"
+        ],
+        "properties": {
+          "calls_left": {
+            "type": "integer"
+          },
+          "calls_used": {
+            "type": "integer"
+          },
+          "error_code": {
+            "type": "integer"
+          },
+          "error_message": {
+            "type": "string"
+          },
+          "fiat_code": {
+            "type": "string",
+            "enum": [
+              "usd",
+              "eur"
+            ],
+            "example": "usd",
+            "description": "The fiat currency selected in the profile"
+          },
+          "riskscore_profile": {
+            "description": "The Risk Score profile selected while calculating the RIsk Score",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 150
+              },
+              "name": {
+                "type": "string",
+                "example": "default"
+              }
+            }
+          },
+          "server_time": {
+            "type": "integer"
+          },
+          "validation_errors": {
+            "type": "object"
+          }
+        }
+      },
+      "filter_transfer": {
+        "type": "object",
+        "properties": {
+          "archived": {
+            "type": "boolean",
+            "example": false
+          },
+          "term": {
+            "type": "string",
+            "description": "Search query. You may enter an address hash, a transaction hash or a transfer ID",
+            "example": "1AxCHtZA1mxNLg2o6KPRCyDRueifLPXED"
+          },
+          "addresses": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "1NDyJtNTjmwk5xPNhjgAMu4HDHigtobu1s"
+            }
+          },
+          "txs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "ef03d7898de8179aac29f89b8c0835189216d07ddfed58c11fcb72bc8a23c167"
+            }
+          },
+          "id": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Transfer ID",
+              "example": "d8eafe"
+            }
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "deposit",
+              "withdrawal",
+              "none"
+            ]
+          },
+          "currency": {
+            "type": "object",
+            "properties": {
+              "btc": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "eth": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "bch": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "ltc": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "riskscore_from": {
+            "type": "number",
+            "description": "Minimal Risk Score value, from 0 to 1",
+            "example": 0.3
+          },
+          "riskscore_to": {
+            "type": "number",
+            "description": "Maximum Risk Score value, from 0 to 1",
+            "example": 0.6
+          },
+          "created_from": {
+            "type": "number",
+            "example": 1561007720
+          },
+          "created_to": {
+            "type": "number",
+            "example": 1561107720
+          },
+          "time_from": {
+            "type": "number",
+            "example": 1561107720
+          },
+          "time_to": {
+            "type": "number",
+            "example": 1561107720
+          },
+          "updated_from": {
+            "type": "number",
+            "example": 1561007720
+          },
+          "updated_to": {
+            "type": "number",
+            "example": 1561107720
+          },
+          "amount_from": {
+            "type": "number",
+            "example": 1
+          },
+          "amount_to": {
+            "type": "number",
+            "example": 1000000000
+          },
+          "fiat_from": {
+            "type": "number",
+            "example": 28821
+          },
+          "fiat_to": {
+            "type": "number",
+            "example": 202748821
+          },
+          "status": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "update",
+                "failed",
+                "ready",
+                "pending",
+                "new",
+                "missed"
+              ]
+            }
+          }
+        }
+      },
+      "filter_customer": {
+        "type": "object",
+        "properties": {
+          "archived": {
+            "type": "boolean",
+            "example": false
+          },
+          "fiat_deposit_from": {
+            "type": "number",
+            "example": 4314600,
+            "description": "Minimum amount deposited by customer, in selected fiat"
+          },
+          "fiat_deposit_to": {
+            "type": "number",
+            "example": 4314600,
+            "description": "Maximum amount deposited by customer, in selected fiat"
+          },
+          "fiat_withdrawal_from": {
+            "type": "number",
+            "example": 4314600,
+            "description": "Minimum amount withdrawn by customer, in selected fiat"
+          },
+          "fiat_withdrawal_to": {
+            "type": "number",
+            "example": 4314600,
+            "description": "Maximum amount withdrawn by customer, in selected fiat"
+          },
+          "n_txs_from": {
+            "type": "integer",
+            "example": 5
+          },
+          "n_txs_to": {
+            "type": "integer",
+            "example": 10
+          },
+          "risky_volume_from": {
+            "type": "number",
+            "example": 100000000,
+            "description": "Risky amount in satoshis"
+          },
+          "risky_volume_to": {
+            "type": "number",
+            "example": 200000000,
+            "description": "Risky amount in satoshis"
+          },
+          "risky_volume_fiat_from": {
+            "type": "number",
+            "example": 10000,
+            "description": "Risky amount in selected fiat"
+          },
+          "risky_volume_fiat_to": {
+            "type": "number",
+            "example": 20000,
+            "description": "Risky amount in selected fiat"
+          },
+          "last_added_from": {
+            "type": "number",
+            "example": 1561007720
+          },
+          "last_added_to": {
+            "type": "number",
+            "example": 1561007720
+          },
+          "term": {
+            "type": "string",
+            "description": "Search may be performed by customer name or notes",
+            "example": "test customer"
+          }
+        }
+      },
+      "filter_batch_transfers": {
+        "type": "object",
+        "properties": {
+          "archived": {
+            "type": "boolean",
+            "example": false
+          },
+          "addresses": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "1NDyJtNTjmwk5xPNhjgAMu4HDHigtobu1s"
+            }
+          },
+          "txs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "ef03d7898de8179aac29f89b8c0835189216d07ddfed58c11fcb72bc8a23c167"
+            }
+          },
+          "customer": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "AS3AXQ4v6k5JnVvY"
+            }
+          },
+          "currency": {
+            "type": "object",
+            "properties": {
+              "btc": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "eth": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "bch": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "ltc": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "term": {
+            "type": "string",
+            "description": "Search query, you may enter address hash, transaction hash or trnsfer ID",
+            "example": "1AxCHtZA1mxNLg2o6KPRCyDRueifLPXED"
+          },
+          "id": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Transfer ID",
+              "example": "d8eafe"
+            }
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "deposit",
+              "withdrawal",
+              "none"
+            ]
+          },
+          "riskscore_from": {
+            "type": "number",
+            "description": "Minimal Risk Score value, from 0 to 1",
+            "example": 0.3
+          },
+          "riskscore_to": {
+            "type": "number",
+            "description": "Maximum Risk Score value, from 0 to 1",
+            "example": 0.6
+          },
+          "created_from": {
+            "type": "number",
+            "example": 1561007720
+          },
+          "created_to": {
+            "type": "number",
+            "example": 1561107720
+          },
+          "time_from": {
+            "type": "number",
+            "example": 1561107720
+          },
+          "time_to": {
+            "type": "number",
+            "example": 1561107720
+          },
+          "updated_from": {
+            "type": "number",
+            "example": 1561007720
+          },
+          "updated_to": {
+            "type": "number",
+            "example": 1561107720
+          },
+          "amount_from": {
+            "type": "number",
+            "example": 1
+          },
+          "amount_to": {
+            "type": "number",
+            "example": 1000000000
+          },
+          "fiat_from": {
+            "type": "number",
+            "example": 28821
+          },
+          "fiat_to": {
+            "type": "number",
+            "example": 202748821
+          },
+          "status": {
+            "type": "array",
+            "description": "The list of transfer statuses",
+            "items": {
+              "type": "string",
+              "enum": [
+                "update",
+                "failed",
+                "ready",
+                "pending",
+                "new",
+                "missed"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
